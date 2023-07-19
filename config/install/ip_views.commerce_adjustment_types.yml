@@ -1,0 +1,6 @@
+DUAS:
+  label: 'DUAS'
+  singular_label: 'DUAS'
+  plural_label: 'DUAS'
+  has_ui: true
+  weight: 10

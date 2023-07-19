@@ -1,0 +1,7 @@
+ip_views.settings:
+  path: admin/config/ip_views
+  defaults:
+    _title: 'ip views'
+    _form: \Drupal\ip_views\Form\ip_views_form
+  requirements:
+    _permission: 'administer ip views'

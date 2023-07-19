@@ -1,0 +1,6 @@
+services:
+  ip_views.CustomPriceResolver:
+    class: Drupal\ip_views\CustomPriceResolver
+    arguments: ['@current_user']
+    tags:
+      - { name: commerce_order.order_processor, priority: 110 }

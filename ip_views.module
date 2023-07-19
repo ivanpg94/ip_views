@@ -1,0 +1,94 @@
+<?php
+
+use Symfony\Component\HttpFoundation;
+use Drupal\commerce_order\Adjustment;
+use Drupal\commerce_price\Price;
+
+
+function ip_views_theme($existing, $type, $theme, $path) {
+
+  return [
+    'adjustments_canarias' => [
+      'variables' => ['#newadjustments' => NULL],
+    ],
+//    'path' => $path . '../../themes/custom/belgrade_subtheme/templates/commerce/order',
+//    'template' => 'commerce-order-total-total-summary'
+  ];
+
+}
+function ip_views_preprocess_commerce_order_total_summary(&$page) {
+ $parameter = \Drupal::routeMatch()->getParameter('commerce_order');
+ //dump($parameter->getTotalPrice());
+
+ //dump($parameter->getAdjustments());
+//dump($page);
+ $page['newadjustments']=null;
+ $adjustments = \Drupal::service('ip_views.CustomPriceResolver')->process($parameter);
+
+ $page['newadjustments']= $adjustments;
+}
+
+/*function ip_views_preprocess_page(array &$variables){
+  $parameter = \Drupal::routeMatch()->getParameter('commerce_order');
+  $form = \Drupal::formBuilder()->getForm('Drupal\ip_views\Form\ip_views_form');
+  $region_code_form = ($form['ip_views_settings']['ip']['#value']);
+
+   $ip = \Drupal::request()->getClientIp();
+  $data = json_decode(file_get_contents("https://ip-api.io/api/json?api_key=".$ip));
+  $region_code_check = $data->region_code;
+   //$region_code_check = 'AN';
+   if($region_code_check == $region_code_form){
+     $duas = ($form['ip_views_settings']['duas']['#value']);
+     $duas_amount = new Price($duas, 'EUR');
+     if(!is_null($parameter)){
+
+       $adjustmentsOrder = $parameter->collectAdjustments(array_filter(['tax']));
+
+       foreach ($adjustmentsOrder as $adjustment) {
+          $parameter->set('locked', TRUE);
+          $parameter->get('adjustments')->removeAdjustment($adjustment);
+        }
+        $duas = $parameter->addAdjustment(new Adjustment([
+          'type' => 'tax',
+          'label' => 'DUAS',
+          'amount' => ($duas_amount),
+          'percentage' => '0.1',
+          'included' => FALSE,
+          'locked' => TRUE,
+        ]));
+        $variables['newadjustments'] = $parameter->getAdjustments();
+      }
+    }
+  }
+*/
+function ip_views_preprocess_block(array &$variables) {
+
+  $variables['#attached']['library'][] = 'ip_views/ip_views';
+  if ($variables['elements']['#plugin_id'] == 'views_block:varbase_heroslider_media-varbase_heroslider_media') {
+    $form = \Drupal::formBuilder()->getForm('Drupal\ip_views\Form\ip_views_form');
+    $view_1 = ($form['ip_views_settings']['view_1']['#value']);
+    $view_2 = ($form['ip_views_settings']['view_2']['#value']);
+    $region_code_form = ($form['ip_views_settings']['ip']['#value']);
+
+    $region_code_check = \Drupal::service('smart_ip.smart_ip_location')->get('regionCode');
+    //dump($region_code_check);
+    //dump($region_code_form);
+    // \Drupal\smart_ip\SmartIp::query();
+
+    //  $region_code_check = 'AN';
+        $views = array(
+          'view_1' => $view_1,
+          'view_2' => $view_2,
+          'region_code_check' => $region_code_check,
+          'region_code_form' => $region_code_form,
+        );
+        $variables['#attached']['library'][] = 'ip_views/ip_views';
+
+        $variables['#attached']['drupalSettings']['ip_views']= $views;
+    }
+
+    //dump(\Drupal::service('smart_ip.smart_ip_location'));
+
+//$location = \Drupal::service('smart_ip.smart_ip_location')->get('regionCode');
+//dpm($location);
+}

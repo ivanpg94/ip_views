@@ -1,0 +1,5 @@
+ip_views.settings:
+  title: 'IP Views'
+  parent: system.admin_config
+  description: 'Configure settings.'
+  route_name: ip_views.settings
